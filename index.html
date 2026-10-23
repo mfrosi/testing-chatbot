@@ -47,13 +47,13 @@ button{font:inherit;cursor:pointer}
   </div>
 
   <form id="identitas" class="kartu">
-    <label for="nama">Nama (boleh dikosongkan)</label>
+    <label for="nama">Nama</label>
     <input type="text" id="nama" autocomplete="name">
     <label for="prodi">Program studi</label>
     <select id="prodi" required><option value="">Pilih program studi</option></select>
     <fieldset><legend>Status</legend><div class="opsi" id="status"></div></fieldset>
     <button class="btn penuh" type="submit">Mulai bertanya</button>
-    <p class="catatan">Data ini dipakai untuk evaluasi layanan dan akreditasi perpustakaan.</p>
+    <p class="catatan">Kolom nama juga bisa diisi dengan nama panggilan.</p>
     <p class="catatan" id="mode" hidden>Mode uji: data belum tersimpan ke Google Sheets.</p>
   </form>
 
@@ -84,7 +84,12 @@ const STOP = new Set('yang dan di ke dari untuk apa bagaimana gimana cara apakah
 const NOT_FOUND = 'Maaf, jawabannya belum ada di data perpustakaan. Silakan tanyakan langsung ke pustakawan di meja layanan.';
 let FAQ = [], user = null;
 
-$('sub').textContent = `Asisten ${CONFIG.LIBRARY}. Jawabannya diambil dari data layanan resmi perpustakaan.`;
+const wa = document.createElement('a');
+wa.href = 'https://s.id/WAPerpusUnija';
+wa.textContent = 'WhatsApp Perpustakaan';
+wa.target = '_blank';
+wa.rel = 'noopener noreferrer';
+$('sub').append(`Asisten ${CONFIG.LIBRARY}. Pertanyaan lebih lanjut bisa hubungi `, wa, '.');
 CONFIG.PRODI.forEach(p => $('prodi').add(new Option(p, p)));
 CONFIG.STATUS.forEach((s, i) => {
   const l = document.createElement('label'), r = document.createElement('input');
