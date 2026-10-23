@@ -1,8 +1,8 @@
 ﻿id;kategori;user_query;kata_kunci;chatbot_response
 1;Keanggotaan;Apakah pendaftaran anggota memerlukan biaya administrasi?;administrasi, anggota, pendaftaran, memerlukan, biaya;Pendaftaran anggota untuk Perpustakaan Wiraraja gratis.
 2;Kunjungan;Apakah perpustakaan buka di hari Minggu atau hari libur nasional?;perpustakaan, hari, libur, nasional, minggu;Hari Minggu dan hari libur nasional UPT Perpustakaan Universitas Wiraraja tutup ya, silahkan kunjungi pada hari Senin-Jumat mulai 7.30 hingga 15.30
-3;Kunjungan;Sampai jam berapa perpustakaan buka?;sampai, perpustakaan, buka, jam;UPT Perpustakaan Wiraraja buka pada pukul 7.30 setiap hari Senin-Jumat
-4;Kunjungan;Jam berapa perpustakaan mulai buka di pagi hari?;perpustakaan, hari, jam, mulai, pagi;UPT Perpustakaan Wiraraja buka pada pukul 7.30 setiap hari Senin-Jumat
+3;Kunjungan;Sampai jam berapa perpustakaan buka?;sampai, perpustakaan, buka, jam;UPT Perpustakaan Wiraraja buka pada pukul 7.30 s/d 15.30 setiap hari Senin-Jumat
+4;Kunjungan;Jam berapa perpustakaan mulai buka di pagi hari?;perpustakaan, hari, jam, mulai, pagi;UPT Perpustakaan Wiraraja buka pada pukul 7.30 s/d 15.30 setiap hari Senin-Jumat
 5;Peminjaman;Berapa lama waktu pinjam untuk buku di perpustakaan?;waktu, buku, fiksi, pinjam, lama;Batas waktu peminjaman standar adalah 7 hari untuk mahasiswa dan karyawan, dan 14 hari untuk dosen.
 6;Peminjaman;Apakah buku yang saya pinjam bisa diperpanjang?;pinjam, perpanjang, di perpanjang;Untuk mahasiswa atau karyawan, perpanjangan buku bisa dilakukan 3x. Sedangkan, untuk dosen hanya 1x perpanjangan.
 7;Layanan/Koleksi;Bagaimana cara mengakses jurnal yang dilanggan oleh Perpustakaan?;jurnal, langganan, e-journal, akses;Kamu bisa ke web perpus.wiraraja.ac.id dan pilih sub-menu E-Resources & Jurnal pada menu Koleksi & Riset.
