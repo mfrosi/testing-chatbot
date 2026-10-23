@@ -176,7 +176,7 @@ function ask(q) {
   const id = Math.random().toString(36).slice(2, 10);
   addRating(id);
   kirim({ action: 'log', id, waktu: new Date().toLocaleString('sv-SE', { timeZone: 'Asia/Jakarta' }),
-          nama: user.nama, prodi: user.prodi, status: user.status, pertanyaan: q, jawaban: text, ditemukan: found ? 'Ya' : 'Tidak' });
+          nama: user.nama, prodi: user.prodi, status: user.status, ditemukan: found ? 'Ya' : 'Tidak' });
 }
 
 $('identitas').addEventListener('submit', e => {
@@ -188,9 +188,14 @@ $('identitas').addEventListener('submit', e => {
 });
 $('tanya').addEventListener('submit', e => { e.preventDefault(); const v = $('q').value; $('q').value = ''; ask(v); });
 
-fetch('faq.csv', { cache: 'no-cache' }).then(r => { if (!r.ok) throw 0; return r.text(); })
-  .then(t => { FAQ = muatFAQ(t); if (!FAQ.length) throw 0; })
-  .catch(() => { $('identitas').hidden = true; addMsg('bot', 'Data FAQ gagal dimuat. Pastikan faq.csv ada di repo dan punya kolom pertanyaan (atau user_query) dan jawaban (atau chatbot_response), lalu buka lewat link GitHub Pages.'); });
+fetch('faq.csv', { cache: 'no-cache' })
+  .then(r => { if (!r.ok) throw new Error(`faq.csv tidak ditemukan di repo GitHub (kode ${r.status}). Pastikan nama filenya persis faq.csv.`); return r.text(); })
+  .then(t => { FAQ = muatFAQ(t); if (!FAQ.length) throw new Error('faq.csv terbaca tapi tidak ada baris yang valid. Kolom yang terbaca: ' + t.split('\n')[0].replace(/^\ufeff/, '').trim()); })
+  .catch(err => {
+    $('identitas').hidden = true;
+    const m = err instanceof TypeError ? 'faq.csv tidak bisa diambil. Buka halaman ini lewat link GitHub Pages, bukan dengan klik dua kali file-nya.' : err.message;
+    addMsg('bot', 'Data FAQ gagal dimuat. ' + m);
+  });
 </script>
 </body>
 </html>
