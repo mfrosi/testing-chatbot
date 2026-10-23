@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tanya Perpustakaan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Newsreader:opsz,wght@6..72,600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F2F4F1;--ink:#16212B;--muted:#4A5560;--line:#D5DBD3;--navy:#23466E;--red:#B23A3A;--star:#D9A21B}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 'Figtree',system-ui,sans-serif}
+main{max-width:720px;margin:0 auto;padding:1.5rem 1rem 6rem}
+.kartu{background:#fff;border:1px solid var(--line);border-radius:4px;padding:1.4rem 1.5rem 1.2rem;margin-bottom:1.2rem}
+.kartu h1{font:600 2rem/1.15 'Newsreader',serif;margin:0}
+.kartu hr{border:0;border-top:2px solid var(--red);margin:.8rem 0 .7rem}
+.kartu p{margin:0;color:var(--muted);font-size:.95rem}
+label{display:block;font-weight:500;margin:.9rem 0 .3rem}
+input[type=text],select{width:100%;padding:.65rem .75rem;border:1px solid var(--line);border-radius:4px;font:inherit;background:#fff;color:var(--ink)}
+fieldset{border:0;padding:0;margin:.9rem 0 0}
+legend{font-weight:500;margin-bottom:.3rem;padding:0}
+.opsi{display:flex;flex-wrap:wrap;gap:.5rem}
+.opsi label{display:flex;align-items:center;gap:.4rem;margin:0;font-weight:400;border:1px solid var(--line);border-radius:4px;padding:.45rem .7rem;background:#fff;cursor:pointer}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--navy);color:#fff;border:0;border-radius:4px;padding:.7rem 1.1rem;font-weight:600}
+.btn.penuh{width:100%;margin-top:1.1rem}
+:focus-visible{outline:3px solid var(--navy);outline-offset:2px}
+.catatan{font-size:.85rem;color:var(--muted);margin:.8rem 0 0}
+.msg{max-width:88%;padding:.75rem .95rem;margin:.7rem 0;border:1px solid var(--line);border-radius:6px;background:#fff;white-space:pre-wrap;overflow-wrap:anywhere}
+.msg.user{margin-left:auto;background:var(--navy);color:#fff;border-color:var(--navy)}
+.rate{margin:-.3rem 0 .6rem;font-size:.85rem;color:var(--muted)}
+.rate button{background:none;border:0;font-size:1.5rem;line-height:1;padding:.1rem .15rem;color:#B9C0B7;vertical-align:middle}
+.rate button.on{color:var(--star)}
+.saran{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem;margin:-.2rem 0 .7rem;font-size:.9rem;color:var(--muted)}
+.saran button{background:#fff;border:1px solid var(--navy);color:var(--navy);border-radius:999px;padding:.35rem .8rem;font-size:.9rem}
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--bg);border-top:1px solid var(--line);padding:.7rem 1rem calc(.7rem + env(safe-area-inset-bottom,0px))}
+.bar form{max-width:720px;margin:0 auto;display:flex;gap:.5rem}
+.bar input{flex:1}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main>
+  <div class="kartu">
+    <h1>Tanya Perpustakaan</h1><hr>
+    <p id="sub"></p>
+  </div>
+
+  <form id="identitas" class="kartu">
+    <label for="nama">Nama (boleh dikosongkan)</label>
+    <input type="text" id="nama" autocomplete="name">
+    <label for="prodi">Program studi</label>
+    <select id="prodi" required><option value="">Pilih program studi</option></select>
+    <fieldset><legend>Status</legend><div class="opsi" id="status"></div></fieldset>
+    <button class="btn penuh" type="submit">Mulai bertanya</button>
+    <p class="catatan">Data ini dipakai untuk evaluasi layanan dan akreditasi perpustakaan.</p>
+    <p class="catatan" id="mode" hidden>Mode uji: data belum tersimpan ke Google Sheets.</p>
+  </form>
+
+  <div id="chat" aria-live="polite"></div>
+</main>
+
+<div class="bar" id="bar" hidden>
+  <form id="tanya">
+    <input type="text" id="q" placeholder="Tulis pertanyaanmu di sini" aria-label="Pertanyaan" autocomplete="off">
+    <button class="btn" type="submit">Kirim</button>
+  </form>
+</div>
+
+<script>
+// ===== PENGATURAN (silakan ubah) =====
+const CONFIG = {
+  LIBRARY: "Perpustakaan Universitas Wiraraja",
+  APPS_SCRIPT_URL: "",                      // tempel URL Web App dari Google Apps Script
+  PRODI: ["Prodi A", "Prodi B", "Prodi C", "Lainnya"],   // ganti dengan prodi kampus
+  STATUS: ["Mahasiswa", "Dosen", "Tendik / Karyawan", "Lainnya"],
+  MIN_SCORE: 0.35,      // makin kecil = pencocokan makin longgar
+  SUGGEST_SCORE: 0.2    // batas untuk menampilkan saran "Mungkin maksud kamu"
+};
+// =====================================
+
+const $ = id => document.getElementById(id);
+const STOP = new Set('yang dan di ke dari untuk apa bagaimana gimana cara apakah bisa saya aku itu ini dengan atau kah nya ada berapa kapan dimana mana gak tidak mau ingin boleh perpustakaan pustaka tanya mohon tolong'.split(' '));
+const NOT_FOUND = 'Maaf, jawabannya belum ada di data perpustakaan. Silakan tanyakan langsung ke pustakawan di meja layanan.';
+let FAQ = [], user = null;
+
+$('sub').textContent = `Asisten ${CONFIG.LIBRARY}. Jawabannya diambil dari data layanan resmi perpustakaan.`;
+CONFIG.PRODI.forEach(p => $('prodi').add(new Option(p, p)));
+CONFIG.STATUS.forEach((s, i) => {
+  const l = document.createElement('label'), r = document.createElement('input');
+  r.type = 'radio'; r.name = 'status'; r.value = s; r.checked = i === 0;
+  l.append(r, ' ' + s); $('status').appendChild(l);
+});
+if (!CONFIG.APPS_SCRIPT_URL) $('mode').hidden = false;
+
+// ---------- CSV & pencarian ----------
+function parseCSV(t) {
+  const rows = []; let r = [], f = '', q = false;
+  for (let i = 0; i < t.length; i++) {
+    const c = t[i];
+    if (q) { if (c === '"') { if (t[i + 1] === '"') { f += '"'; i++; } else q = false; } else f += c; }
+    else if (c === '"') q = true;
+    else if (c === ',') { r.push(f); f = ''; }
+    else if (c === '\n') { r.push(f); rows.push(r); r = []; f = ''; }
+    else if (c !== '\r') f += c;
+  }
+  if (f || r.length) { r.push(f); rows.push(r); }
+  const h = rows.shift().map(x => x.replace(/^\ufeff/, '').trim().toLowerCase());
+  return rows.filter(x => x.some(v => v.trim()))
+             .map(x => Object.fromEntries(h.map((k, i) => [k, (x[i] || '').trim()])));
+}
+const norm = s => s.toLowerCase().replace(/[^a-z0-9 ]+/g, ' ');
+const tok = s => norm(s).split(/\s+/).filter(w => w.length > 1 && !STOP.has(w));
+const grams = t => { const g = new Set(); t.forEach(w => { const p = ' ' + w + ' '; for (let i = 0; i < p.length - 2; i++) g.add(p.slice(i, i + 3)); }); return g; };
+
+function rank(q) {
+  const t = tok(q); if (!t.length) return [];
+  const g = grams(t);
+  return FAQ.map(r => {
+    let hit = 0; g.forEach(x => { if (r._g.has(x)) hit++; });
+    const cov = t.filter(w => r._t.includes(w)).length / t.length;
+    return { r, s: 0.6 * (hit / g.size) + 0.4 * cov };
+  }).sort((a, b) => b.s - a.s);
+}
+
+// ---------- Simpan ke Google Sheets ----------
+function kirim(d) {
+  if (!CONFIG.APPS_SCRIPT_URL) return;
+  fetch(CONFIG.APPS_SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(d) }).catch(() => {});
+}
+
+// ---------- Tampilan chat ----------
+function addMsg(role, text) {
+  const d = document.createElement('div'); d.className = 'msg ' + role; d.textContent = text;
+  $('chat').appendChild(d); window.scrollTo(0, document.body.scrollHeight);
+}
+function addRating(id) {
+  const d = document.createElement('div'); d.className = 'rate';
+  d.append('Seberapa membantu jawaban ini? ');
+  for (let n = 1; n <= 5; n++) {
+    const b = document.createElement('button'); b.type = 'button'; b.textContent = '★';
+    b.setAttribute('aria-label', `Beri ${n} bintang`);
+    b.onclick = () => {
+      d.querySelectorAll('button').forEach((x, i) => { x.classList.toggle('on', i < n); x.disabled = true; });
+      d.append(' Terima kasih!'); kirim({ action: 'rate', id, rating: n });
+    };
+    d.appendChild(b);
+  }
+  $('chat').appendChild(d); window.scrollTo(0, document.body.scrollHeight);
+}
+function ask(q) {
+  q = q.trim(); if (!q) return;
+  addMsg('user', q);
+  const ranked = rank(q), top = ranked[0], found = !!top && top.s >= CONFIG.MIN_SCORE;
+  const text = found ? top.r.jawaban : NOT_FOUND;
+  addMsg('bot', text);
+  if (!found) {
+    const sug = ranked.filter(x => x.s >= CONFIG.SUGGEST_SCORE).slice(0, 3);
+    if (sug.length) {
+      const box = document.createElement('div'); box.className = 'saran'; box.append('Mungkin maksud kamu: ');
+      sug.forEach(x => { const b = document.createElement('button'); b.type = 'button'; b.textContent = x.r.pertanyaan; b.onclick = () => ask(x.r.pertanyaan); box.appendChild(b); });
+      $('chat').appendChild(box);
+    }
+  }
+  const id = Math.random().toString(36).slice(2, 10);
+  addRating(id);
+  kirim({ action: 'log', id, waktu: new Date().toLocaleString('sv-SE', { timeZone: 'Asia/Jakarta' }),
+          nama: user.nama, prodi: user.prodi, status: user.status, pertanyaan: q, jawaban: text, ditemukan: found ? 'Ya' : 'Tidak' });
+}
+
+$('identitas').addEventListener('submit', e => {
+  e.preventDefault();
+  user = { nama: $('nama').value.trim() || 'Anonim', prodi: $('prodi').value, status: document.querySelector('input[name=status]:checked').value };
+  $('identitas').hidden = true; $('bar').hidden = false;
+  addMsg('bot', `Halo, ${user.nama}! Mau tanya apa tentang perpustakaan?`);
+  $('q').focus();
+});
+$('tanya').addEventListener('submit', e => { e.preventDefault(); const v = $('q').value; $('q').value = ''; ask(v); });
+
+fetch('faq.csv', { cache: 'no-cache' }).then(r => { if (!r.ok) throw 0; return r.text(); })
+  .then(t => { FAQ = parseCSV(t).map(r => { const tk = tok(r.pertanyaan + ' ' + (r.kata_kunci || '')); return { ...r, _t: tk, _g: grams(tk) }; }); })
+  .catch(() => { $('identitas').hidden = true; addMsg('bot', 'Data FAQ gagal dimuat. Buka halaman ini lewat link GitHub Pages, bukan dengan klik dua kali file-nya.'); });
+</script>
+</body>
+</html>
