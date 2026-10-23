@@ -4,15 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tanya Perpustakaan</title>
-     <link rel="icon" type="image/png" href="favicon.png">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Newsreader:opsz,wght@6..72,600&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#F2F4F1;--ink:#16212B;--muted:#4A5560;--line:#D5DBD3;--navy:#23466E;--red:#B23A3A;--star:#D9A21B}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 'Figtree',system-ui,sans-serif}
-main{max-width:720px;margin:0 auto;padding:1.5rem 1rem 6rem}
-.kartu{background:#fff;border:1px solid var(--line);border-radius:4px;padding:1.4rem 1.5rem 1.2rem;margin-bottom:1.2rem}
+main{max-width:720px;margin:0 auto;padding:1.5rem 1rem 8rem}
+a{color:var(--navy)}
+.kartu{background:#fff;border:1px solid var(--line);border-radius:4px;padding:1.4rem 1.5rem 1.2rem;margin:1.2rem 0}
+.kartu:first-child{margin-top:0}
 .kartu h1{font:600 2rem/1.15 'Newsreader',serif;margin:0}
 .kartu hr{border:0;border-top:2px solid var(--red);margin:.8rem 0 .7rem}
 .kartu p{margin:0;color:var(--muted);font-size:.95rem}
@@ -25,18 +28,23 @@ legend{font-weight:500;margin-bottom:.3rem;padding:0}
 button{font:inherit;cursor:pointer}
 .btn{background:var(--navy);color:#fff;border:0;border-radius:4px;padding:.7rem 1.1rem;font-weight:600}
 .btn.penuh{width:100%;margin-top:1.1rem}
+.alt{background:#fff;color:var(--navy);border:1px solid var(--navy);border-radius:4px;padding:.3rem .8rem;font-size:.9rem;font-weight:500}
+.alt:disabled{opacity:.45;cursor:not-allowed}
+.linkbtn{background:none;border:0;color:var(--navy);text-decoration:underline;padding:.3rem 0}
 :focus-visible{outline:3px solid var(--navy);outline-offset:2px}
 .catatan{font-size:.85rem;color:var(--muted);margin:.8rem 0 0}
 .msg{max-width:88%;padding:.75rem .95rem;margin:.7rem 0;border:1px solid var(--line);border-radius:6px;background:#fff;white-space:pre-wrap;overflow-wrap:anywhere}
 .msg.user{margin-left:auto;background:var(--navy);color:#fff;border-color:var(--navy)}
-.rate{margin:-.3rem 0 .6rem;font-size:.85rem;color:var(--muted)}
-.rate button{background:none;border:0;font-size:1.5rem;line-height:1;padding:.1rem .15rem;color:#B9C0B7;vertical-align:middle}
-.rate button.on{color:var(--star)}
 .saran{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem;margin:-.2rem 0 .7rem;font-size:.9rem;color:var(--muted)}
 .saran button{background:#fff;border:1px solid var(--navy);color:var(--navy);border-radius:999px;padding:.35rem .8rem;font-size:.9rem}
-.bar{position:fixed;left:0;right:0;bottom:0;background:var(--bg);border-top:1px solid var(--line);padding:.7rem 1rem calc(.7rem + env(safe-area-inset-bottom,0px))}
-.bar form{max-width:720px;margin:0 auto;display:flex;gap:.5rem}
-.bar input{flex:1}
+.nilai{display:flex;gap:.2rem;margin:.6rem 0}
+.nilai button{background:none;border:0;font-size:2.2rem;line-height:1;padding:.1rem;color:#B9C0B7}
+.nilai button.on{color:var(--star)}
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--bg);border-top:1px solid var(--line);padding:.6rem 1rem calc(.7rem + env(safe-area-inset-bottom,0px))}
+.bar-isi{max-width:720px;margin:0 auto}
+.bar-atas{display:flex;justify-content:flex-end;margin-bottom:.45rem}
+.bar form{display:flex;gap:.5rem}
+.bar input{flex:1;min-width:0}
 [hidden]{display:none!important}
 </style>
 </head>
@@ -48,13 +56,13 @@ button{font:inherit;cursor:pointer}
   </div>
 
   <form id="identitas" class="kartu">
-    <label for="nama">Nama</label>
+    <label for="nama">Nama (boleh dikosongkan)</label>
     <input type="text" id="nama" autocomplete="name">
     <label for="prodi">Program studi</label>
     <select id="prodi" required><option value="">Pilih program studi</option></select>
     <fieldset><legend>Status</legend><div class="opsi" id="status"></div></fieldset>
     <button class="btn penuh" type="submit">Mulai bertanya</button>
-    <p class="catatan">Kolom nama juga bisa diisi dengan nama panggilan.</p>
+    <p class="catatan">Data ini dipakai untuk evaluasi layanan dan akreditasi perpustakaan.</p>
     <p class="catatan" id="mode" hidden>Mode uji: data belum tersimpan ke Google Sheets.</p>
   </form>
 
@@ -62,10 +70,13 @@ button{font:inherit;cursor:pointer}
 </main>
 
 <div class="bar" id="bar" hidden>
-  <form id="tanya">
-    <input type="text" id="q" placeholder="Tulis pertanyaanmu di sini" aria-label="Pertanyaan" autocomplete="off">
-    <button class="btn" type="submit">Kirim</button>
-  </form>
+  <div class="bar-isi">
+    <div class="bar-atas"><button class="alt" type="button" id="akhiri" disabled title="Ajukan minimal satu pertanyaan dulu">Akhiri chat</button></div>
+    <form id="tanya">
+      <input type="text" id="q" placeholder="Tulis pertanyaanmu di sini" aria-label="Pertanyaan" autocomplete="off">
+      <button class="btn" type="submit">Kirim</button>
+    </form>
+  </div>
 </div>
 
 <script>
@@ -83,13 +94,10 @@ const CONFIG = {
 const $ = id => document.getElementById(id);
 const STOP = new Set('yang dan di ke dari untuk apa bagaimana gimana cara apakah bisa saya aku itu ini dengan atau kah nya ada berapa kapan dimana mana gak tidak mau ingin boleh perpustakaan pustaka tanya mohon tolong'.split(' '));
 const NOT_FOUND = 'Maaf, jawabannya belum ada di data perpustakaan. Silakan tanyakan langsung ke pustakawan di meja layanan.';
-let FAQ = [], user = null;
+let FAQ = [], user = null, sesi = null;
 
 const wa = document.createElement('a');
-wa.href = 'https://s.id/WAPerpusUnija';
-wa.textContent = 'WhatsApp Perpustakaan';
-wa.target = '_blank';
-wa.rel = 'noopener noreferrer';
+wa.href = 'https://s.id/WAPerpusUnija'; wa.textContent = 'WhatsApp Perpustakaan'; wa.target = '_blank'; wa.rel = 'noopener noreferrer';
 $('sub').append(`Asisten ${CONFIG.LIBRARY}. Pertanyaan lebih lanjut bisa hubungi `, wa, '.');
 CONFIG.PRODI.forEach(p => $('prodi').add(new Option(p, p)));
 CONFIG.STATUS.forEach((s, i) => {
@@ -115,6 +123,10 @@ function parseCSV(t, d) {
   return rows.filter(x => x.some(v => v.trim()))
              .map(x => Object.fromEntries(h.map((k, i) => [k, (x[i] || '').trim()])));
 }
+const norm = s => s.toLowerCase().replace(/[^a-z0-9 ]+/g, ' ');
+const tok = s => norm(s).split(/\s+/).filter(w => w.length > 1 && !STOP.has(w));
+const grams = t => { const g = new Set(); t.forEach(w => { const p = ' ' + w + ' '; for (let i = 0; i < p.length - 2; i++) g.add(p.slice(i, i + 3)); }); return g; };
+
 function muatFAQ(t) {
   const b1 = t.split('\n')[0];
   const d = (b1.match(/;/g) || []).length > (b1.match(/,/g) || []).length ? ';' : ',';
@@ -126,9 +138,6 @@ function muatFAQ(t) {
     return { pertanyaan, jawaban, _t: tk, _g: grams(tk) };
   }).filter(r => r.pertanyaan && r.jawaban);
 }
-const norm = s => s.toLowerCase().replace(/[^a-z0-9 ]+/g, ' ');
-const tok = s => norm(s).split(/\s+/).filter(w => w.length > 1 && !STOP.has(w));
-const grams = t => { const g = new Set(); t.forEach(w => { const p = ' ' + w + ' '; for (let i = 0; i < p.length - 2; i++) g.add(p.slice(i, i + 3)); }); return g; };
 
 function rank(q) {
   const t = tok(q); if (!t.length) return [];
@@ -145,32 +154,22 @@ function kirim(d) {
   if (!CONFIG.APPS_SCRIPT_URL) return;
   fetch(CONFIG.APPS_SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(d) }).catch(() => {});
 }
+function kirimSesi() {
+  kirim({ action: 'sesi', id: sesi.id, waktu: sesi.waktu, nama: user.nama, prodi: user.prodi, status: user.status,
+          jumlah_tanya: sesi.tanya, terjawab: sesi.terjawab });
+}
 
 // ---------- Tampilan chat ----------
+function bawah() { window.scrollTo(0, document.body.scrollHeight); }
 function addMsg(role, text) {
   const d = document.createElement('div'); d.className = 'msg ' + role; d.textContent = text;
-  $('chat').appendChild(d); window.scrollTo(0, document.body.scrollHeight);
-}
-function addRating(id) {
-  const d = document.createElement('div'); d.className = 'rate';
-  d.append('Seberapa membantu jawaban ini? ');
-  for (let n = 1; n <= 5; n++) {
-    const b = document.createElement('button'); b.type = 'button'; b.textContent = '★';
-    b.setAttribute('aria-label', `Beri ${n} bintang`);
-    b.onclick = () => {
-      d.querySelectorAll('button').forEach((x, i) => { x.classList.toggle('on', i < n); x.disabled = true; });
-      d.append(' Terima kasih!'); kirim({ action: 'rate', id, rating: n });
-    };
-    d.appendChild(b);
-  }
-  $('chat').appendChild(d); window.scrollTo(0, document.body.scrollHeight);
+  $('chat').appendChild(d); bawah();
 }
 function ask(q) {
-  q = q.trim(); if (!q) return;
+  q = q.trim(); if (!q || sesi.selesai) return;
   addMsg('user', q);
   const ranked = rank(q), top = ranked[0], found = !!top && top.s >= CONFIG.MIN_SCORE;
-  const text = found ? top.r.jawaban : NOT_FOUND;
-  addMsg('bot', text);
+  addMsg('bot', found ? top.r.jawaban : NOT_FOUND);
   if (!found) {
     const sug = ranked.filter(x => x.s >= CONFIG.SUGGEST_SCORE).slice(0, 3);
     if (sug.length) {
@@ -179,20 +178,50 @@ function ask(q) {
       $('chat').appendChild(box);
     }
   }
-  const id = Math.random().toString(36).slice(2, 10);
-  addRating(id);
-  kirim({ action: 'log', id, waktu: new Date().toLocaleString('sv-SE', { timeZone: 'Asia/Jakarta' }),
-          nama: user.nama, prodi: user.prodi, status: user.status, ditemukan: found ? 'Ya' : 'Tidak' });
+  sesi.tanya++; if (found) sesi.terjawab++;
+  $('akhiri').disabled = false;
+  kirimSesi();
+  bawah();
+}
+
+// ---------- Akhiri chat & rating ----------
+function tampilRating() {
+  $('bar').hidden = true;
+  const k = document.createElement('div'); k.className = 'kartu';
+  const p = document.createElement('p'); p.textContent = 'Terima kasih sudah bertanya! Seberapa puas kamu dengan layanan chatbot ini?';
+  const nilai = document.createElement('div'); nilai.className = 'nilai';
+  const aksi = document.createElement('div');
+  const batal = document.createElement('button'); batal.type = 'button'; batal.className = 'linkbtn'; batal.textContent = 'Kembali ke chat';
+  batal.onclick = () => { k.remove(); $('bar').hidden = false; };
+  aksi.appendChild(batal);
+  for (let n = 1; n <= 5; n++) {
+    const b = document.createElement('button'); b.type = 'button'; b.textContent = '★';
+    b.setAttribute('aria-label', `Beri ${n} bintang`);
+    b.onclick = () => {
+      nilai.querySelectorAll('button').forEach((x, i) => { x.classList.toggle('on', i < n); x.disabled = true; });
+      sesi.selesai = true;
+      kirim({ action: 'rate', id: sesi.id, rating: n });
+      const t = document.createElement('p'); t.textContent = 'Terima kasih atas penilaianmu! Sesi chat sudah berakhir.';
+      const baru = document.createElement('button'); baru.type = 'button'; baru.className = 'btn'; baru.textContent = 'Mulai chat baru';
+      baru.style.marginTop = '.8rem'; baru.onclick = () => location.reload();
+      aksi.replaceChildren(t, baru);
+    };
+    nilai.appendChild(b);
+  }
+  k.append(p, nilai, aksi);
+  $('chat').appendChild(k); bawah();
 }
 
 $('identitas').addEventListener('submit', e => {
   e.preventDefault();
   user = { nama: $('nama').value.trim() || 'Anonim', prodi: $('prodi').value, status: document.querySelector('input[name=status]:checked').value };
+  sesi = { id: 's' + Math.random().toString(36).slice(2, 10), waktu: new Date().toLocaleString('sv-SE', { timeZone: 'Asia/Jakarta' }), tanya: 0, terjawab: 0, selesai: false };
   $('identitas').hidden = true; $('bar').hidden = false;
   addMsg('bot', `Halo, ${user.nama}! Mau tanya apa tentang perpustakaan?`);
   $('q').focus();
 });
 $('tanya').addEventListener('submit', e => { e.preventDefault(); const v = $('q').value; $('q').value = ''; ask(v); });
+$('akhiri').addEventListener('click', tampilRating);
 
 fetch('faq.csv', { cache: 'no-cache' })
   .then(r => { if (!r.ok) throw new Error(`faq.csv tidak ditemukan di repo GitHub (kode ${r.status}). Pastikan nama filenya persis faq.csv.`); return r.text(); })
