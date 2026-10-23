@@ -94,13 +94,13 @@ CONFIG.STATUS.forEach((s, i) => {
 if (!CONFIG.APPS_SCRIPT_URL) $('mode').hidden = false;
 
 // ---------- CSV & pencarian ----------
-function parseCSV(t) {
+function parseCSV(t, d) {
   const rows = []; let r = [], f = '', q = false;
   for (let i = 0; i < t.length; i++) {
     const c = t[i];
     if (q) { if (c === '"') { if (t[i + 1] === '"') { f += '"'; i++; } else q = false; } else f += c; }
     else if (c === '"') q = true;
-    else if (c === ',') { r.push(f); f = ''; }
+    else if (c === d) { r.push(f); f = ''; }
     else if (c === '\n') { r.push(f); rows.push(r); r = []; f = ''; }
     else if (c !== '\r') f += c;
   }
@@ -108,6 +108,17 @@ function parseCSV(t) {
   const h = rows.shift().map(x => x.replace(/^\ufeff/, '').trim().toLowerCase());
   return rows.filter(x => x.some(v => v.trim()))
              .map(x => Object.fromEntries(h.map((k, i) => [k, (x[i] || '').trim()])));
+}
+function muatFAQ(t) {
+  const b1 = t.split('\n')[0];
+  const d = (b1.match(/;/g) || []).length > (b1.match(/,/g) || []).length ? ';' : ',';
+  const ambil = (r, ...k) => { for (const n of k) if (r[n]) return r[n]; return ''; };
+  return parseCSV(t, d).map(r => {
+    const pertanyaan = ambil(r, 'pertanyaan', 'user_query', 'question', 'tanya');
+    const jawaban = ambil(r, 'jawaban', 'chatbot_response', 'answer', 'respon');
+    const tk = tok(pertanyaan + ' ' + (r.kata_kunci || ''));
+    return { pertanyaan, jawaban, _t: tk, _g: grams(tk) };
+  }).filter(r => r.pertanyaan && r.jawaban);
 }
 const norm = s => s.toLowerCase().replace(/[^a-z0-9 ]+/g, ' ');
 const tok = s => norm(s).split(/\s+/).filter(w => w.length > 1 && !STOP.has(w));
@@ -178,8 +189,8 @@ $('identitas').addEventListener('submit', e => {
 $('tanya').addEventListener('submit', e => { e.preventDefault(); const v = $('q').value; $('q').value = ''; ask(v); });
 
 fetch('faq.csv', { cache: 'no-cache' }).then(r => { if (!r.ok) throw 0; return r.text(); })
-  .then(t => { FAQ = parseCSV(t).map(r => { const tk = tok(r.pertanyaan + ' ' + (r.kata_kunci || '')); return { ...r, _t: tk, _g: grams(tk) }; }); })
-  .catch(() => { $('identitas').hidden = true; addMsg('bot', 'Data FAQ gagal dimuat. Buka halaman ini lewat link GitHub Pages, bukan dengan klik dua kali file-nya.'); });
+  .then(t => { FAQ = muatFAQ(t); if (!FAQ.length) throw 0; })
+  .catch(() => { $('identitas').hidden = true; addMsg('bot', 'Data FAQ gagal dimuat. Pastikan faq.csv ada di repo dan punya kolom pertanyaan (atau user_query) dan jawaban (atau chatbot_response), lalu buka lewat link GitHub Pages.'); });
 </script>
 </body>
 </html>
