@@ -1,17 +1,18 @@
 ﻿id;kategori;user_query;kata_kunci;chatbot_response
-1;Keanggotaan;Apakah pendaftaran anggota memerlukan biaya administrasi?;administrasi, anggota, pendaftaran, memerlukan, biaya;Pendaftaran anggota untuk perpustakaan umum biasanya gratis.
+1;Keanggotaan;Apakah pendaftaran anggota memerlukan biaya administrasi?;administrasi, anggota, pendaftaran, memerlukan, biaya;Pendaftaran anggota untuk Perpustakaan Wiraraja gratis.
 2;Kunjungan;Apakah perpustakaan buka di hari Minggu atau hari libur nasional?;perpustakaan, hari, libur, nasional, minggu;Hari Minggu dan hari libur nasional UPT Perpustakaan Universitas Wiraraja tutup ya, silahkan kunjungi pada hari Senin-Jumat mulai 7.30 hingga 15.30
 3;Kunjungan;Sampai jam berapa perpustakaan buka?;sampai, perpustakaan, buka, jam;UPT Perpustakaan Wiraraja buka pada pukul 7.30 setiap hari Senin-Jumat
 4;Kunjungan;Jam berapa perpustakaan mulai buka di pagi hari?;perpustakaan, hari, jam, mulai, pagi;UPT Perpustakaan Wiraraja buka pada pukul 7.30 setiap hari Senin-Jumat
 5;Peminjaman;Berapa lama waktu pinjam untuk buku di perpustakaan?;waktu, buku, fiksi, pinjam, lama;Batas waktu peminjaman standar adalah 7 hari untuk mahasiswa dan karyawan, dan 14 hari untuk dosen.
 6;Peminjaman;Apakah buku yang saya pinjam bisa diperpanjang?;pinjam, perpanjang, di perpanjang;Untuk mahasiswa atau karyawan, perpanjangan buku bisa dilakukan 3x. Sedangkan, untuk dosen hanya 1x perpanjangan.
-;Layanan/Koleksi;Bagaimana cara mengakses jurnal yang dilanggan oleh Perpustakaan?;jurnal, langganan, e-journal, akses;Kamu bisa ke web perpus.wiraraja.ac.id dan pilih sub-menu E-Resources & Jurnal pada menu Koleksi & Riset.
-7;Layanan/Koleksi;Apakah perpustakaan memiliki akses e-book;e-book;Koleksi e-book Perpustakaan Wiraraja dapat diakses di aplikasi Kubuku Wiraraja
-8;Layanan/Koleksi;Apakah perpustakaan menyediakan akses ke database berbayar?;database, berbayar, perpustakaan;Kamu bisa ke web perpus.wiraraja.ac.id dan pilih sub-menu E-Resources & Jurnal pada menu Koleksi & Riset.
-9;Layanan/Fasilitas;Bagaimana cara mencari koleksi buku yang ada di rak?;rak, mencari, buku, koleksi;Masuk ke Perpustakaan dan kamu bisa mencari koleksi buku melalui komputer OPAC yang ada di Perpustakaan
-10;Layanan/Fasilitas;Fasilitas apa saja di Perpustakaan?;ruang diskusi, komputer, referensi, skripsi, buku, ensiklopedia;Fasilitas di Perpustakaan Wiraraja yaitu ruang diskusi, ruang komputer, layanan referensi, layanan baca
-11;Repository;Apakah ada loker penitipan barang di sini?;loker, barang, penitipan, sini;Tersedia layanan loker di Perpustakaan Wiraraja ya :)
-12;Repository;Kenapa saya tidak bisa login?;repository, login, npm, username;Silahkan tunggu maksimal 3 hari kerja :)
-13;Repository;Saya ingin konfirmasi bahwa saya telah merevisi unggahan mandiri repository;revisi;Silahkan tunggu maksimal 3 hari kerja atau kamu bisa langsung datang ke UPT Perpustakaan Wiraraja
-14;Repository;Saya sudah selesai upload;revisi, repository, selesai upload, file;Silahkan tunggu maksimal 3 hari kerja atau kamu bisa langsung datang ke UPT Perpustakaan Wiraraja
-;;Saya belum menerima email padahal sudah selesai revisi;selesai revisi, email, pemberitahuan;"Pastikan kamu telah melakukan ""Deposit"" pada akun Repository kamu atau kamu bisa langsung ke UPT Perpustakaan Wiraraja ya :)"
+7;Layanan/Koleksi;Bagaimana cara mengakses jurnal yang dilanggan oleh Perpustakaan?;jurnal, langganan, e-journal, akses;Kamu bisa ke web perpus.wiraraja.ac.id dan pilih sub-menu E-Resources & Jurnal pada menu Koleksi & Riset.
+8;Layanan/Koleksi;Apakah perpustakaan memiliki akses e-book;e-book;Koleksi e-book Perpustakaan Wiraraja dapat diakses di aplikasi Kubuku Wiraraja
+9;Layanan/Koleksi;Apakah perpustakaan menyediakan akses ke database berbayar?;database, berbayar, perpustakaan;Kamu bisa ke web perpus.wiraraja.ac.id dan pilih sub-menu E-Resources & Jurnal pada menu Koleksi & Riset.
+10;Layanan/Fasilitas;Saya tidak bisa masuk ke perpustakaan, bagaimana caranya mendaftar ke perpustakaan?;administrasi, anggota, pendaftaran, daftar;Kamu bisa melakukan pendaftaran anggota perpustakaan dengan melakukan scan QR code di pintu masuk perpustakaan, scan QR code di akun Instagram perpustakaan atau melalui s.id/PendaftaranAnggotaPerpustakaanUnija
+11;Layanan/Fasilitas;Bagaimana cara mencari koleksi buku yang ada di rak?;rak, mencari, buku, koleksi;Masuk ke Perpustakaan dan kamu bisa mencari koleksi buku melalui komputer OPAC yang ada di Perpustakaan
+12;Layanan/Fasilitas;Fasilitas apa saja di Perpustakaan?;ruang diskusi, komputer, referensi, skripsi, buku, ensiklopedia;Fasilitas di Perpustakaan Wiraraja yaitu ruang diskusi, ruang komputer, layanan referensi, layanan baca
+13;Repository;Apakah ada loker penitipan barang di sini?;loker, barang, penitipan, sini;Tersedia layanan loker di Perpustakaan Wiraraja ya :)
+14;Repository;Kenapa saya tidak bisa login?;repository, login, npm, username;Silahkan tunggu maksimal 3 hari kerja :)
+15;Repository;Saya ingin konfirmasi bahwa saya telah merevisi unggahan mandiri repository;revisi;Silahkan tunggu maksimal 3 hari kerja atau kamu bisa langsung datang ke UPT Perpustakaan Wiraraja
+16;Repository;Saya sudah selesai upload;revisi, repository, selesai upload, file;Silahkan tunggu maksimal 3 hari kerja atau kamu bisa langsung datang ke UPT Perpustakaan Wiraraja
+17;Repository;Saya belum menerima email padahal sudah selesai revisi;selesai revisi, email, pemberitahuan;"Pastikan kamu telah melakukan ""Deposit"" pada akun Repository kamu atau kamu bisa langsung ke UPT Perpustakaan Wiraraja ya :)"
